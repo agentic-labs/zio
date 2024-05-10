@@ -5,7 +5,7 @@ import zio.test.assert
 import java.time.temporal.ChronoUnit
 import java.time.{Duration => JavaDuration}
 import java.util.concurrent.TimeUnit
-import scala.concurrent.duration.{Duration => ScalaDuration}
+import scala.concurrent.duration.{Duration => ScalaDuration, FiniteDuration => ScalaFiniteDuration}
 
 object DurationSpec extends ZIOBaseSpec {
 
@@ -414,6 +414,16 @@ object DurationSpec extends ZIOBaseSpec {
       },
       test("2.days         = fromNanos(76800000000000L)") {
         assert(2.days)(equalTo(Duration.fromNanos(172800000000000L)))
+      }
+    ),
+    suite("asScalaFiniteUnsafe")(
+      test("asScalaFiniteUnsafe converts finite durations") {
+        assert(1.second.asScalaFiniteUnsafe)(equalTo(ScalaFiniteDuration(1, TimeUnit.SECONDS)))
+        assert(500.millis.asScalaFiniteUnsafe)(equalTo(ScalaFiniteDuration(500, TimeUnit.MILLISECONDS)))
+        assert(1500.micros.asScalaFiniteUnsafe)(equalTo(ScalaFiniteDuration(1500000, TimeUnit.NANOSECONDS)))
+      },
+      test("asScalaFiniteUnsafe converts Infinity to Long.MaxValue nanos") {
+        assert(Duration.Infinity.asScalaFiniteUnsafe)(equalTo(ScalaFiniteDuration(Long.MaxValue, TimeUnit.NANOSECONDS)))
       }
     )
   )

@@ -179,6 +179,11 @@ final class DurationOps(private val duration: Duration) extends AnyVal {
     case _                 => ScalaFiniteDuration(duration.toNanos, TimeUnit.NANOSECONDS)
   }
 
+  def asScalaFiniteUnsafe: ScalaFiniteDuration = duration match {
+    case Duration.Infinity => new ScalaFiniteDuration(Long.MaxValue, TimeUnit.NANOSECONDS)
+    case _ => new ScalaFiniteDuration(duration.toNanos, TimeUnit.NANOSECONDS)
+  }
+
   def asJava: JavaDuration = duration
 
   def max(other: Duration): Duration = if (duration > other) duration else other
